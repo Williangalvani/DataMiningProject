@@ -51,7 +51,7 @@ def extract_text(path):
     html_content = html_content.translate(str.maketrans(remove, spaces))  # remove os caracteres desejados
     html_line = " ".join(html_content.splitlines()[6:])  # remove um cabeçalho que tem nos arquivos antes do <html>
 
-    print("--- %s seconds ---" % (time.time() - start_time))
-    print("--- %s seconds --- (3000)" % (3000*(time.time() - start_time)))
+    # print("--- %s seconds ---" % (time.time() - start_time))
+    # print("--- %s seconds --- (3000)" % (3000*(time.time() - start_time)))
 
     return html_line
