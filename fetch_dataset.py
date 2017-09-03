@@ -13,11 +13,10 @@ def prep_dataset():
             os.makedirs(prep_dataset)
 
         for file in files:
-            if "html" in file:
-                path = os.path.join(root, file)
-                text = extract_text(path)
-                with open(path.replace("dataset", "prep_dataset").replace("html", "txt"), 'w') as f:
-                    f.write(text)
+            path = os.path.join(root, file)
+            text = extract_text(path)
+            with open(path.replace("dataset", "prep_dataset").replace("html", "txt"), 'w') as f:
+                f.write(text)
 
 
 class Dataset:
@@ -45,9 +44,11 @@ def fetch_data(subset="all"):
     target = []
 
     #check if prepared dataset exists:
-    _, _, files = os.walk("prep_dataset").__next__()
-    print(files)
-    if len(files) < 10:
+    root, dirs, files = os.walk("prep_dataset").__next__()
+    
+    if len(dirs) < 7:
+        print(files)
+        print(dirs)
         print("pre-processing dataset")
         prep_dataset()
 
