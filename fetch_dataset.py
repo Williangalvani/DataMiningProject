@@ -13,13 +13,22 @@ def prep_dataset():
             os.makedirs(prep_dataset)
 
         for file in files:
-            if "gitignore" not in file:
-                path = os.path.join(root, file)
-                text = extract_text(path)
-                new_path = ".".join(path.split(".")[:-1])
-                new_path = new_path.replace("dataset", "prep_dataset")+".txt"
-                with open(new_path, 'w') as f:
-                    f.write(text)
+            #if "gitignore" not in file:
+		        path = os.path.join(root, file)
+		        text = extract_text(path)
+		        if path.endswith(".html"):
+		        		new_path = ".".join(path.split(".")[:-1])
+		        else:
+				        new_path = path
+		        new_path = new_path.replace("dataset", "prep_dataset")+".txt"
+		        with open(new_path, 'w') as f:
+		            f.write(text)
+
+
+def split_dataset():
+		"""
+		"""
+
 
 
 class Dataset:
