@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup  # utilizado para extrair o texto de um html
 import time
-
+import re
 
 def extract_word_set(path):
     """
@@ -50,7 +50,7 @@ def extract_text(path):
     spaces = " " * remove.__len__()  # utilizado para remover os caracteres
     html_content = html_content.translate(str.maketrans(remove, spaces))  # remove os caracteres desejados
     html_line = " ".join(html_content.splitlines()[6:])  # remove um cabeçalho que tem nos arquivos antes do <html>
-
+    html_line = re.sub("\d+", "", html_line)
     # print("--- %s seconds ---" % (time.time() - start_time))
     # print("--- %s seconds --- (3000)" % (3000*(time.time() - start_time)))
 
