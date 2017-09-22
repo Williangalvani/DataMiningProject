@@ -93,7 +93,6 @@ class Dataset:
 	data = []
 	description = ""
 	filenames = []
-	target = []
 	target_names = []
 
 

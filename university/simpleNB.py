@@ -1,5 +1,4 @@
-from fetch_dataset import fetch_train_data
-from fetch_dataset import fetch_test_data
+from fetch_dataset import fetch_data
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn import metrics
@@ -10,9 +9,9 @@ import time
 
 start = time.time()
 
-train_data = fetch_train_data()
+train_data = fetch_data(["cornell","texas","wisconsin","misc"])
 
-test_data = fetch_test_data()
+test_data = fetch_data(["washington"])
 vectorizer = TfidfVectorizer()
 
 train_vectors = vectorizer.fit_transform(train_data.data)

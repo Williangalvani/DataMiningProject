@@ -4,6 +4,22 @@
 Sample pipeline for text feature extraction and evaluation
 ==========================================================
 
+The dataset used in this example is the 20 newsgroups dataset which will be
+automatically downloaded and then cached and reused for the document
+classification example.
+
+You can adjust the number of categories by giving their names to the dataset
+loader or setting them to None to get the 20 of them.
+
+Here is a sample output of a run on a quad-core machine::
+
+  Loading 20 newsgroups dataset for categories:
+  ['alt.atheism', 'talk.religion.misc']
+  1427 documents
+  2 categories
+
+  Performing grid search..
+
 """
 
 # Author: Olivier Grisel <olivier.grisel@ensta.org>
@@ -17,17 +33,13 @@ from pprint import pprint
 from time import time
 import logging
 
-from fetch_dataset import fetch_train_data
-from fetch_dataset import fetch_test_data
-
+from fetch_dataset import fetch_data
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
-from sklearn.feature_extraction.text import HashingVectorizer
 from sklearn.linear_model import SGDClassifier
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
-from sklearn import metrics
 
 print(__doc__)
 
@@ -42,33 +54,33 @@ logging.basicConfig(level=logging.INFO,
 # Uncomment the following to do the analysis on all the categories
 #categories = None
 
-data = fetch_train_data()
+print("Loading 20 newsgroups dataset for categories:")
 
-test = fetch_test_data()
+data = fetch_data(["washington","texas","wisconsin","misc"])
+
+test = fetch_data(["cornell"])
 
 
 # #############################################################################
 # Define a pipeline combining a text feature extractor with a simple
 # classifier
 pipeline = Pipeline([
-    ('vect', CountVectorizer(max_df=1.0, ngram_range=(1,2))),
-    ('tfidf', TfidfTransformer()),
-    ('hash', HashingVectorizer(decode_error='ignore', n_features=2 ** 10)),
-    ('clf', SGDClassifier(alpha=0.00001, penalty='elasticnet')),
+    ('vect', CountVectorizer(max_df=1.0, ngram_range= (1,2),max_features=5000, stop_words='english')),
+    ('tfidf', TfidfTransformer(use_idf = True)),
+    ('clf', SGDClassifier(penalty = 'l2')),
 ])
 
 # uncommenting more parameters will give better exploring power but will
 # increase processing time in a combinatorial way
 parameters = {
-    'hash__n_features': (2**9, 2**10, 2**11),
-    #'vect__max_df': (0.5, 0.75, 1.0),
-    #'vect__max_features': (None, 5000, 10000, 50000),
-    #'vect__ngram_range': ((1, 1), (1, 2)),  # unigrams or bigrams
+    #'vect__max_df': ((1.0)),
+    #'vect__max_features': (5000,),
+    #'vect__ngram_range': ((1, 2)),  # unigrams or bigrams
     #'tfidf__use_idf': (True, False),
     #'tfidf__norm': ('l1', 'l2'),
-    #'clf__alpha': (0.00001, 0.000001),
+    'clf__alpha': (0.001, 0.0001),
     #'clf__penalty': ('l2', 'elasticnet'),
-    #'clf__n_iter': (10, 50, 80),
+    'clf__n_iter': (10, 50, 100),
 }
 
 if __name__ == "__main__":
@@ -95,7 +107,7 @@ if __name__ == "__main__":
         print("\t%s: %r" % (param_name, best_parameters[param_name]))
 
     
-    pred = grid_search.predict(test.data)
+    pred = grid_search.predict(grid_search.transform(test.data))
     print("f1 score:")
     f1_score = metrics.f1_score(test.target, pred, average='macro')
     print(f1_score)

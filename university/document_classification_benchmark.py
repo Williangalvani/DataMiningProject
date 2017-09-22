@@ -31,8 +31,7 @@ import sys
 from time import time
 import matplotlib.pyplot as plt
 
-from fetch_dataset import fetch_train_data
-from fetch_dataset import fetch_test_data
+from fetch_dataset import fetch_data
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import HashingVectorizer
@@ -103,10 +102,10 @@ remove = ()
 
 print("Loading universities dataset for categories:")
 
-data_train = fetch_train_data()
+data_train = fetch_data(["cornell","texas","wisconsin","misc"])
 
 
-data_test = fetch_test_data()
+data_test = fetch_data(["washington"])
 
 print('data loaded')
 
