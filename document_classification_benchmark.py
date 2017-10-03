@@ -36,6 +36,7 @@ from fetch_dataset import fetch_test_data
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import HashingVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_selection import SelectFromModel
 from sklearn.feature_selection import SelectKBest, chi2
 from sklearn.linear_model import RidgeClassifier
@@ -78,6 +79,8 @@ op.add_option("--use_hashing",
 op.add_option("--n_features",
               action="store", type=int, default=2 ** 16,
               help="n_features when using the hashing vectorizer.")
+op.add_option("--use_count", action="store_true",
+              help="Use a count vectorizer.")
 
 
 
@@ -135,6 +138,9 @@ if opts.use_hashing:
     vectorizer = HashingVectorizer(stop_words='english', alternate_sign=False,
                                    n_features=opts.n_features)
     X_train = vectorizer.transform(data_train.data)
+elif opts.use_count:
+    vectorizer = CountVectorizer(max_df=1.0, ngram_range=(3,3))
+    X_train = vectorizer.fit_transform(data_train.data)
 else:
     vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.5,
                                  stop_words='english')
@@ -272,6 +278,7 @@ results.append(benchmark(Pipeline([
   ('feature_selection', SelectFromModel(LinearSVC(penalty="l1", dual=False,
                                                   tol=1e-3))),
   ('classification', LinearSVC(penalty="l2"))])))
+
 
 # make some plots
 
